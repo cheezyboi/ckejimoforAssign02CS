@@ -3,11 +3,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class redditUser {
+
+public class redditDataAnalyzer {
 
 	String userName;
 	float accountAge;
 	int counter = 0;
+
 
 	boolean detectTrump(String linetoAnalyze) {
 		String linetoAnalyzeLowerCase = linetoAnalyze.toLowerCase();
@@ -19,14 +21,13 @@ public class redditUser {
 			return false;
 		}
 	}
-	
+
 	public void detectRussia(String line) {
-		if (	line.contains("russia")) {
+		if (line.contains("russia")) {
 			counter++;
-			//System.out.println(line);
 		}
 	}
-	
+
 	public void readRedditFile(String fileToRead) {
 		System.out.println("Ready to read file.");
 		String line = null;
