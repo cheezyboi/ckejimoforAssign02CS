@@ -4,12 +4,11 @@ import java.io.FileReader;
 import java.io.IOException;
 
 
-public class redditDataAnalyzer {
+public class DataAnalyzer {
 
 	String userName;
 	float accountAge;
 	int counter = 0;
-
 
 	boolean detectTrump(String linetoAnalyze) {
 		String linetoAnalyzeLowerCase = linetoAnalyze.toLowerCase();
@@ -32,12 +31,9 @@ public class redditDataAnalyzer {
 		System.out.println("Ready to read file.");
 		String line = null;
 		try {
-			// FileReader reads text files in the default encoding
 			FileReader myFileReader = new FileReader(fileToRead);
 			System.out.println("I was able to open your file!");
-			// Always wrap FileReader in BufferedReader
 			BufferedReader bufferedReader = new BufferedReader(myFileReader);
-			// Reads each line in file
 			while ((line = bufferedReader.readLine()) != null) {
 				//System.out.println(line);
 				this.detectRussia(line);
