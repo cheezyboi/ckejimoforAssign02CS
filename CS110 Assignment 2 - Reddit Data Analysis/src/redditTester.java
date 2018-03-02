@@ -7,6 +7,8 @@ public class redditTester {
 		DataAnalyzer redditRead = new DataAnalyzer();
 		redditRead.readRedditFile(fileName);
 
+		redditRead.wordIdentifier("ate");
+
 		System.out.println(redditRead.counter);
 	}
 }
