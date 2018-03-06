@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -15,17 +14,17 @@ import java.util.Set;
 import java.util.TreeMap;
 
 public class DataAnalyzer {
-	
+
 	private String line = null;
 	private ArrayList<String> tempStoredLines = new ArrayList<String>();
-	
+
 	//Variables for general analysis
 	private ArrayList<String> permGeneralLines = new ArrayList<String>();
-	private Map<Integer,String> treeMap = new TreeMap<Integer, String>();
-	
+	private Map<String, Integer> genMap = new TreeMap<String, Integer>();
+
 	//Variables for TrumpAnalysis
-	private Map<Integer,String> trumpMap = new TreeMap<Integer, String>();
 	private ArrayList<String> permTrumpLines = new ArrayList<String>();
+	private Map<String, Integer> trumpMap = new TreeMap<String, Integer>();
 
 	//used in analysis methods
 	/**
@@ -52,12 +51,9 @@ public class DataAnalyzer {
 			}//else
 		}//for loop
 		this.arrayListCondenser(permList);
-		System.out.println(permList);
 	}//wordIdentifier
 
 	//used in wordIdentifier
-
-	// used in wordIdentifier
 	/**
 	 * Condenses the array of characters into string -> store in new ArrayList
 	 */
@@ -76,42 +72,30 @@ public class DataAnalyzer {
 	 * A HashMap is a collection class that stores key (the actual word) and value
 	 * (# of times it appears) pairs
 	 */
-	public void wordFrequency(ArrayList<String> permList) {
-		/*
-		 * initializes a HashSet from the values in permStoredLines
-		 * stores each key in the ArrayList with a unique value
-		 * (a.k.a. HashCode)
-		 */
+	public void wordFrequency(ArrayList<String> permList,Map<String, Integer> map) {
 		Set<String> unique = new HashSet<String>(permList);
-		/*
-		 * initializes a HashMap using the word as the information Key and
-		 * the frequency that the work appears as the value
-		 */
 		for (String key : unique) {
-			//myMap.put(Collections.frequency(permList, key), key);
-			treeMap.put(Collections.frequency(permList, key), key);
+			map.put(key, Collections.frequency(permList, key));
 		}//for loop
-		//printMap(myMap);
-		printMap(treeMap);
-	}//wordFrequency	
-	
+		printMap(map);
+	}//wordFrequency
+
 	//used in wordFrequency
 	/**
 	 * Orders treeMap by the integer i.e. the # of times it occurs in the file
 	 */
-	private static void printMap(Map<Integer, String> map) {
-	    Set s = map.entrySet();
-	    Iterator it = s.iterator();
-	    while ( it.hasNext() ) {
-	       Map.Entry entry = (Map.Entry) it.next();
-	       Integer key = (Integer) entry.getKey();
-	       String value = (String) entry.getValue();
-	       System.out.println(key + " => " + value);
-	    }//while loop
-	    System.out.println("========================");
-	}//printMap
+	 private static void printMap(Map<String, Integer> map) {
+			 Set s = map.entrySet();
+			 Iterator it = s.iterator();
+			 while ( it.hasNext() ) {
+					Map.Entry entry = (Map.Entry) it.next();
+					String key = (String) entry.getKey();
+					Integer value = (Integer) entry.getValue();
+					System.out.println(key + " => " + value);
+			 }//while loop
+			 System.out.println("========================");
+	 }//printMap
 
-	
 	/**
 	 * reads the file and identifies all words in file
 	 * @param fileToRead - the file that is being analyzed
@@ -127,7 +111,7 @@ public class DataAnalyzer {
 				line.toLowerCase();
 				this.wordIdentifier(line, permGeneralLines);
 			}//while loop
-			this.wordFrequency(permGeneralLines);
+			this.wordFrequency(permGeneralLines, genMap);
 			bufferedReader.close();
 		} catch (FileNotFoundException ex) {
 			System.out.println("Unable to open file '" + fileToRead + "'");
@@ -135,8 +119,8 @@ public class DataAnalyzer {
 			System.out.println("Error reading file '" + fileToRead + "'");
 		}//catch
 	}//generalAnalysis
-	
-	
+
+
 	/**
 	 * reads the file and identifies all words in the file's lines that contain
 	 * trump
@@ -153,9 +137,9 @@ public class DataAnalyzer {
 				line.toLowerCase();
 				if (line.contains("trump")) {
 					this.wordIdentifier(line, permTrumpLines);
-				}//if 
+				}//if
 			}//while loop
-			this.wordFrequency(permTrumpLines);
+			this.wordFrequency(permTrumpLines, trumpMap);
 			bufferedReader.close();
 		} catch (FileNotFoundException ex) {
 			System.out.println("Unable to open file '" + fileToRead + "'");
@@ -163,10 +147,7 @@ public class DataAnalyzer {
 			System.out.println("Error reading file '" + fileToRead + "'");
 		}//catch
 	}//trumpAnalysis
-	
-	//not in use
-	
-    
+
 	//not in use
 	private void writeList() {
 	// The FileWriter constructor throws IOException, which must be caught.
@@ -175,7 +156,7 @@ public class DataAnalyzer {
 			System.out.println("wrote a file");
 			writer = new PrintWriter("the-file-name.txt", "UTF-8");
 			writer.println("The first line");
-			writer.println("The second line");	        
+			writer.println("The second line");
 			writer.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -187,5 +168,3 @@ public class DataAnalyzer {
     }
 
 }//DataAnalyzer Class
-
-
