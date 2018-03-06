@@ -13,7 +13,7 @@ public class redditTester {
 		 * ; //redditRead.wordIdentifier(testLine, permTest);
 		 * //redditRead.wordFrequency(permTest, testMap);
 		 */
-		
+
 		String post = "redditPosts.txt";
 		String author = "redditAuthors.txt";
 		DataAnalyzer redditRead = new DataAnalyzer();
@@ -23,7 +23,7 @@ public class redditTester {
 		//redditRead.trumpAnalysis(post);
 		//redditRead.drjarnsAnalysis(post ,author);
 		//redditRead.specificAuthorAnalysis(post, author, "drjarns");
-		redditRead.specificWordAnalysis(post, "repeal");
-		
+		redditRead.specificWordAnalysis(post, "influx");
+
 	}// main
 }// redditTester

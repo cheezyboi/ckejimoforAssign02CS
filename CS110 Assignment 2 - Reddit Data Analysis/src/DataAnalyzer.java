@@ -16,11 +16,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-
+//HELLO
 public class DataAnalyzer {
 
 	private String line = null;
 	private ArrayList<String> tempStoredLines = new ArrayList<String>();
+	private int nameCounter = 0;
 
 	// ============================================
 	// ============================================
@@ -198,6 +199,9 @@ public class DataAnalyzer {
 				line.toLowerCase();
 				this.wordIdentifier(line, permPostGeneralLines);
 			} // while loop
+			System.out.println("============================================");
+			System.out.println("=============OVERALL WORD COUNT=============");
+			System.out.println("============================================");
 			this.wordFrequency(permPostGeneralLines, genPostMap);
 			bufferedReader.close();
 		} catch (FileNotFoundException ex) {
@@ -226,6 +230,9 @@ public class DataAnalyzer {
 				line.toLowerCase();
 				this.wordIdentifier(line, permAuthorGeneralLines);
 			} // while loop
+			System.out.println("============================================");
+			System.out.println("==========OVERALL AUTHOR POST COUNT=========");
+			System.out.println("============================================");
 			this.wordFrequency(permAuthorGeneralLines, genAuthorMap);
 			bufferedReader.close();
 		} catch (FileNotFoundException ex) {
@@ -249,6 +256,9 @@ public class DataAnalyzer {
 			while ((line = bufferedReader.readLine()) != null) {
 				permPostGeneralLines.add(line);
 			} // while loop
+			System.out.println("============================================");
+			System.out.println("========SUCCESSFULLY INDEXED POSTS==========");
+			System.out.println("============================================");
 			bufferedReader.close();
 		} catch (FileNotFoundException ex) {
 			System.out.println("Unable to open file '" + fileToRead + "'");
@@ -290,7 +300,6 @@ public class DataAnalyzer {
 		} // catch
 	}// trumpAnalysis
 
-
 	// looks at only lines containing 'trump'
 	/**
 	 * Author drjarns posted the most. these are his posts.
@@ -299,7 +308,7 @@ public class DataAnalyzer {
 		this.generalPostStorage(posts);
 		System.out.println("Ready to read file.");
 		line = null;
-		int nameCounter = 0;
+		nameCounter = 0;
 		try {
 			FileReader myFileReader = new FileReader(authors);
 			System.out.println("I was able to open your file!");
@@ -342,7 +351,7 @@ public class DataAnalyzer {
 		this.generalPostStorage(posts);
 		System.out.println("Ready to read file.");
 		line = null;
-		int nameCounter = 0;
+		nameCounter = 0;
 		try {
 			FileReader myFileReader = new FileReader(authors);
 			System.out.println("I was able to open your file!");
@@ -363,7 +372,7 @@ public class DataAnalyzer {
 			System.out.println("============================================");
 			for (String str : permAuthorLines) {
 				System.out.println(str);
-			}
+			} // for loop
 			System.out.println("============================================");
 			System.out.println("=========NUMBER OF " + specificAuthor + "'S POSTS=========");
 			System.out.println("============================================");
@@ -386,7 +395,7 @@ public class DataAnalyzer {
 		this.generalPostStorage(posts);
 		System.out.println("Ready to read file.");
 		line = null;
-		int nameCounter = 0;
+		nameCounter = 0;
 		try {
 			FileReader myFileReader = new FileReader(posts);
 			System.out.println("I was able to open your file!");
@@ -403,13 +412,13 @@ public class DataAnalyzer {
 			System.out.println("================WORD COUNT==================");
 			System.out.println("============================================");
 			this.wordFrequency(permWordLinesID, wordMap);
-			System.out.println("================POSTS CONTAINING " + specificWord + "================");
+			System.out.println("==========POSTS CONTAINING '" + specificWord + "'==========");
 			System.out.println("============================================");
 			for (String str : permWordLines) {
 				System.out.println(str);
-			}
+			} // for loop
 			System.out.println("============================================");
-			System.out.println("========NUMBER OF POSTS CONTAINING " + specificWord + "========");
+			System.out.println("======NUMBER OF POSTS CONTAINING '" + specificWord + "'====");
 			System.out.println("============================================");
 			System.out.println(permWordLines.size());
 			bufferedReader.close();
