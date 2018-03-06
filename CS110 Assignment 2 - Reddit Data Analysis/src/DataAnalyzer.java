@@ -98,6 +98,7 @@ public class DataAnalyzer {
 	}
 
 	// used in analyses
+	// removes valueless words (ex: like, and, not) and words that occur less than 50 times
 	/**
 	 * Counts the # of times a word occurs in data. Creates HashMap of the data.
 	 * A HashMap is a collection class that stores key (the actual word) and value
@@ -106,7 +107,21 @@ public class DataAnalyzer {
 	private void wordFrequency(ArrayList<String> permList, Map<String, Integer> map) {
 		Set<String> unique = new HashSet<String>(permList);
 		for (String key : unique) {
-			map.put(key, Collections.frequency(permList, key));
+			if (key.equalsIgnoreCase("this") == false && key.equalsIgnoreCase("the") == false
+					&& key.equalsIgnoreCase("and") == false && key.equalsIgnoreCase("of") == false
+					&& key.equalsIgnoreCase("a") == false && key.equalsIgnoreCase("for") == false
+					&& key.equalsIgnoreCase("is") == false && key.equalsIgnoreCase("at") == false
+					&& key.equalsIgnoreCase("on") == false && key.equalsIgnoreCase("it") == false
+					&& key.equalsIgnoreCase("are") == false && key.equalsIgnoreCase("be") == false
+					&& key.equalsIgnoreCase("that") == false && key.equalsIgnoreCase("in") == false
+					&& key.equalsIgnoreCase("was") == false && key.equalsIgnoreCase("has") == false
+					&& key.equalsIgnoreCase("as") == false && key.equalsIgnoreCase("so") == false
+					&& key.equalsIgnoreCase("not") == false && key.equalsIgnoreCase("") == false
+					&& key.equalsIgnoreCase("as") == false && key.equalsIgnoreCase("so") == false
+					&& key.equalsIgnoreCase("an") == false && key.equalsIgnoreCase("its") == false
+					&& Collections.frequency(permList, key) >= 50) {
+				map.put(key, Collections.frequency(permList, key));
+			}
 		} // for loop
 		Map<String, Integer> sortedMap = sortByValue(map);
 		printMap(sortedMap);

@@ -20,10 +20,10 @@ public class redditTester {
 
 		//redditRead.generalPostAnalysis(post);
 		//redditRead.generalAuthorAnalysis(author);
-		//redditRead.trumpAnalysis(post);
+		redditRead.trumpAnalysis(post);
 		//redditRead.drjarnsAnalysis(post ,author);
 		//redditRead.specificAuthorAnalysis(post, author, "drjarns");
-		redditRead.specificWordAnalysis(post, "influx");
+		//redditRead.specificWordAnalysis(post, "spirit");
 
 	}// main
 }// redditTester
