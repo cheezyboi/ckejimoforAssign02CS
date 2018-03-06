@@ -27,14 +27,14 @@ public class DataAnalyzer {
 	private Map<Integer,String> trumpMap = new TreeMap<Integer, String>();
 	private ArrayList<String> permTrumpLines = new ArrayList<String>();
 
-
+	//used in analysis methods
 	/**
 	 * Reads each character in a line and organizes it in an ArrayList.
 	 * If it is a character from a - z When a word ends the program
 	 * condenses the ArrayList into a string.
 	 * @param readLine
 	 */
-	private void wordIdentifier(String readLine,ArrayList<String> permList) {
+	public void wordIdentifier(String readLine,ArrayList<String> permList) {
 		/*
 		 * reads one character at a time and checks if it is a value a-z.
 		 * if it is it will store the character in an ArrayList. When
@@ -42,18 +42,20 @@ public class DataAnalyzer {
 		 * (into a word) into a permanent ArrayList
 		 */
 		for (int i = 0; i < readLine.length(); i++) {
-			String stringLine = Character.toString(readLine.charAt(i));
-			String stringLineLower = stringLine.toLowerCase();
-			if (stringLineLower.matches("[a-z]")) {
+			String charString = Character.toString(readLine.charAt(i));
+			String lowerCharString = charString.toLowerCase();
+			if (lowerCharString.matches("[a-z]")) {
 			//if (stringLineLower.matches(".*[a-z].*")) {
-				tempStoredLines.add(stringLine);
+				tempStoredLines.add(lowerCharString);
 			} else {
 				this.arrayListCondenser(permList);
 			}//else
 		}//for loop
 		this.arrayListCondenser(permList);
+		System.out.println(permList);
 	}//wordIdentifier
-	
+
+	//used in wordIdentifier
 
 	// used in wordIdentifier
 	/**
@@ -68,13 +70,13 @@ public class DataAnalyzer {
 		tempStoredLines.clear();
 	}
 
-	// used in readFile
+	//used in readFile
 	/**
 	 * Counts the # of times a word occurs in data. Creates HashMap of the data.
 	 * A HashMap is a collection class that stores key (the actual word) and value
 	 * (# of times it appears) pairs
 	 */
-	private void wordFrequency(ArrayList<String> permList) {
+	public void wordFrequency(ArrayList<String> permList) {
 		/*
 		 * initializes a HashSet from the values in permStoredLines
 		 * stores each key in the ArrayList with a unique value
