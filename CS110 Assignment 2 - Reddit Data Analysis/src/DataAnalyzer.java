@@ -23,9 +23,13 @@ public class DataAnalyzer {
 	private ArrayList<String> tempStoredLines = new ArrayList<String>();
 
 	// METHODS FOR CONDUCTING ANALYSIS
-	// variables for generalAnalysis
-	private ArrayList<String> permGeneralLines = new ArrayList<String>();
-	private Map<String,Integer> genMap = new TreeMap<String,Integer>();
+	// variables for postGeneralAnalysis
+	private ArrayList<String> permPostGeneralLines = new ArrayList<String>();
+	private Map<String,Integer> genPostMap = new TreeMap<String,Integer>();
+	
+	// variables for authorGeneralAnalysis
+	private ArrayList<String> permAuthorGeneralLines = new ArrayList<String>();
+	private Map<String,Integer> genAuthorMap = new TreeMap<String,Integer>();
 
 	// variables for trumpAnalysis
 	private ArrayList<String> permTrumpLines = new ArrayList<String>();
@@ -34,6 +38,8 @@ public class DataAnalyzer {
 	// variables for authorAnalysis
 	private ArrayList<String> permAuthorLines = new ArrayList<String>();
 	private Map<Integer,String> authorMap = new TreeMap<Integer,String>();
+	private ArrayList<String> drjarnsLines = new ArrayList<String>();
+
 	
 	// used in analysis methods
 	/**
@@ -153,15 +159,16 @@ public class DataAnalyzer {
 		} // catch
 	}//textFileWriter
 
+	//--------------------------------------------------------
+	//--------------------------------------------------------
 	// ANALYSIS METHODS
-	// looks at whole file
 	/**
-	 * reads the file and identifies all words in file
-	 *
-	 * @param fileToRead
-	 *            - the file that is being analyzed
+	 * reads the file and identifies all words in the posts file
+	 * this also works for the authors file but I kept them separate
+	 * because I wanted them funneled into different variables
+	 * @param fileToRead - the file that is being analyzed
 	 */
-	public void generalAnalysis(String fileToRead) {
+	public void generalPostAnalysis(String fileToRead) {
 		System.out.println("Ready to read file.");
 		line = null;
 		try {
@@ -170,24 +177,74 @@ public class DataAnalyzer {
 			BufferedReader bufferedReader = new BufferedReader(myFileReader);
 			while ((line = bufferedReader.readLine()) != null) {
 				line.toLowerCase();
-				this.wordIdentifier(line, permGeneralLines);
+				this.wordIdentifier(line, permPostGeneralLines);
 			} // while loop
-			this.wordFrequency(permGeneralLines, genMap);
+			this.wordFrequency(permPostGeneralLines, genPostMap);
 			bufferedReader.close();
 		} catch (FileNotFoundException ex) {
 			System.out.println("Unable to open file '" + fileToRead + "'");
 		} catch (IOException ex) {
 			System.out.println("Error reading file '" + fileToRead + "'");
 		} // catch
-	}// generalAnalysis
+	}// generalPostAnalysis
+
+	// looks at whole file
+	/**
+	 * reads the file and identifies all words in the authors file
+	 * this also works for the posts file but I kept them separate
+	 * because I wanted them funneled into different variables
+	 * @param fileToRead
+	 *            - the file that is being analyzed
+	 */
+	public void generalAuthorAnalysis(String fileToRead) {
+		System.out.println("Ready to read file.");
+		line = null;
+		try {
+			FileReader myFileReader = new FileReader(fileToRead);
+			System.out.println("I was able to open your file!");
+			BufferedReader bufferedReader = new BufferedReader(myFileReader);
+			while ((line = bufferedReader.readLine()) != null) {
+				line.toLowerCase();
+				this.wordIdentifier(line, permAuthorGeneralLines);
+			} // while loop
+			this.wordFrequency(permAuthorGeneralLines, genAuthorMap);
+			bufferedReader.close();
+		} catch (FileNotFoundException ex) {
+			System.out.println("Unable to open file '" + fileToRead + "'");
+		} catch (IOException ex) {
+			System.out.println("Error reading file '" + fileToRead + "'");
+		} // catch
+	}// generalAuthorAnalysis
+	
+	// used in drjarns
+	/**
+	 * stores all file lines in arrayList. used to identify author's posts.
+	 * @param fileToRead - the file that is being analyzed
+	 */
+	public void generalPostStorage(String fileToRead) {
+		System.out.println("Ready to read file.");
+		line = null;
+		try {
+			FileReader myFileReader = new FileReader(fileToRead);
+			System.out.println("I was able to open your file!");
+			BufferedReader bufferedReader = new BufferedReader(myFileReader);
+			while ((line = bufferedReader.readLine()) != null) {
+				permPostGeneralLines.add(line);
+			} // while loop
+			bufferedReader.close();
+		} catch (FileNotFoundException ex) {
+			System.out.println("Unable to open file '" + fileToRead + "'");
+		} catch (IOException ex) {
+			System.out.println("Error reading file '" + fileToRead + "'");
+		} // catch
+	}// generalPostAnalysis
+	
 
 	// looks at only lines containing 'trump'
 	/**
-	 * reads the file and identifies all words in the file's lines that contain
-	 * trump
-	 *
-	 * @param fileToRead
-	 *            - the file that is being analyzed
+	 * read file and identifies words in the file's lines that contain trump
+	 * this is a narrower version of the general analysis. finds 
+	 * what words are associated with bringing up trump
 	 */
 	public void trumpAnalysis(String fileToRead) {
 		System.out.println("Ready to read file.");
@@ -210,6 +267,40 @@ public class DataAnalyzer {
 			System.out.println("Error reading file '" + fileToRead + "'");
 		} // catch
 	}// trumpAnalysis
+	
+
+	// looks at only lines containing 'trump'
+	/**
+	 * Author drjarns posted the most. these are his posts.
+	 */
+	public void drjarnsAnalysis(String posts, String authors) {
+		this.generalPostStorage(posts);
+		System.out.println("Ready to read file.");
+		line = null;
+		int nameCounter = 0;
+		try {
+			FileReader myFileReader = new FileReader(authors);
+			System.out.println("I was able to open your file!");
+			BufferedReader bufferedReader = new BufferedReader(myFileReader);
+			while ((line = bufferedReader.readLine()) != null) {
+				line.toLowerCase();
+				nameCounter++;
+				if (line.contains("drjarns")) {
+					drjarnsLines.add(this.permPostGeneralLines.get(nameCounter));
+				} // if
+			} // while loop
+			System.out.println("-----------------------");
+			for (String str : drjarnsLines) {
+				System.out.println(str);
+			}
+			System.out.println(drjarnsLines.size());
+			bufferedReader.close();
+		} catch (FileNotFoundException ex) {
+			System.out.println("Unable to open file '" + authors + "'");
+		} catch (IOException ex) {
+			System.out.println("Error reading file '" + authors + "'");
+		} // catch
+	}// drjarnsAnalysis
 
 	// attempting to index the redditAuthor.txt
 	public void authorAnalysis(String fileToRead) {
@@ -231,31 +322,5 @@ public class DataAnalyzer {
 			System.out.println("Error reading file '" + fileToRead + "'");
 		} // catch
 	}// authorAnalysis
-	private void authorIndex(ArrayList<String> permList, Map<Integer, String> map) {
-		Set<String> unique = new HashSet<String>(permList);
-		int h = 0;
-		for (String key : unique) {
-			map.put(h, key);
-			h++;
-		} // for loop
-		printMapAI(map);
-	}// wordFrequency
-	/**
-	 * Orders treeMap by the integer i.e. the # of times it occurs in the file
-	 *
-	 * @throws IOException
-	 */
-	private void printMapAI(Map<Integer, String> sortedMap2) {
-		Set s = sortedMap2.entrySet();
-		Iterator it = s.iterator();
-		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
-			Integer key = (Integer) entry.getKey();
-			String value = (String) entry.getValue();
-			System.out.println(key + " => " + value);
-			this.textFileWriter(value, key);
-		} // while loop
-		System.out.println("========================");
-	}// printMap
 
 }// DataAnalyzer Class

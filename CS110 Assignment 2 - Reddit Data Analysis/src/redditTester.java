@@ -18,9 +18,10 @@ public class redditTester {
 		String author = "redditAuthors.txt";
 		DataAnalyzer redditRead = new DataAnalyzer();
 
-		//redditRead.generalAnalysis(post);
-		redditRead.generalAnalysis(author);
+		//redditRead.generalPostAnalysis(post);
+		//redditRead.generalAuthorAnalysis(author);
 		//redditRead.authorAnalysis(author);
 		//redditRead.trumpAnalysis(post);
+		redditRead.drjarnsAnalysis(post ,author);
 	}// main
 }// redditTester
