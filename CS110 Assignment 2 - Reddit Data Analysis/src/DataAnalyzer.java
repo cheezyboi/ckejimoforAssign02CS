@@ -21,20 +21,20 @@ public class DataAnalyzer {
 	private String line = null;
 	private ArrayList<String> tempStoredLines = new ArrayList<String>();
 
-	// Variables for general analysis
+	// METHODS FOR CONDUCTING ANALYSIS
+	// variables for generalAnalysis
 	private ArrayList<String> permGeneralLines = new ArrayList<String>();
 	private Map<String, Integer> genMap = new TreeMap<String, Integer>();
 
-	// Variables for TrumpAnalysis
+	// variables for trumpAnalysis
 	private ArrayList<String> permTrumpLines = new ArrayList<String>();
 	private Map<String, Integer> trumpMap = new TreeMap<String, Integer>();
 
 	// used in analysis methods
 	/**
-	 * Reads each character in a line and organizes it in an ArrayList. If it is a
-	 * character from a - z When a word ends the program condenses the ArrayList
-	 * into a string.
-	 * 
+	 * Reads each character in a line and organizes it in an ArrayList
+	 * If it is a character from a - z When a word ends the program 
+	 * condenses the ArrayList into a string.
 	 * @param readLine
 	 */
 	public void wordIdentifier(String readLine, ArrayList<String> permList) {
@@ -84,12 +84,11 @@ public class DataAnalyzer {
 		printMap(sortedMap);
 	}// wordFrequency
 
+	// used in wordFrequency
 	/**
 	 * Sorts map by value
-	 * 
-	 * @param unsortMap
-	 *            - unsorted version of the map that is passed into the method
-	 * @return sortedMap - sorted version of the map that is passed into the method
+	 * @param unsortMap - unsorted version of the map that is passed to the method
+	 * @return sortedMap - sorted version of the map that is passed to the method
 	 */
 	private static Map<String, Integer> sortByValue(Map<String, Integer> unsortMap) {
 		// convert map to list of map
@@ -117,7 +116,7 @@ public class DataAnalyzer {
 	 * 
 	 * @throws IOException
 	 */
-	private static void printMap(Map<String, Integer> map) {
+	private void printMap(Map<String, Integer> map) {
 		Set s = map.entrySet();
 		Iterator it = s.iterator();
 		FileWriter writer;
@@ -126,22 +125,35 @@ public class DataAnalyzer {
 			Map.Entry entry = (Map.Entry) it.next();
 			String key = (String) entry.getKey();
 			Integer value = (Integer) entry.getValue();
-			// System.out.println(key + " => " + value);
+			System.out.println(key + " => " + value);
 			/*
 			 * writes data to separate text file
 			 */
-			try {
-				writer = new FileWriter("Analyses.txt", true);
-				bufferedWriter = new BufferedWriter(writer);
-				bufferedWriter.write(key + " => " + value + "\n");
-				bufferedWriter.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} // catch
+			this.textFileWriter(key, value);
 		} // while loop
 		System.out.println("========================");
 	}// printMap
 
+	// used in printMap
+	/**
+	 * writes all initialized analyses to a text file
+	 * @param key - key of the analyzed map
+	 * @param value - value associated with the key of the analyzed map
+	 */
+	public void textFileWriter(String key, Integer value) {
+		FileWriter writer;
+		BufferedWriter bufferedWriter;
+		try {
+			writer = new FileWriter("Analyses.txt", true);
+			bufferedWriter = new BufferedWriter(writer);
+			bufferedWriter.write(key + " => " + value + "\n");
+			bufferedWriter.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} // catch
+	}//textFileWriter
+	
+	// ANALYSIS METHODS
 	/**
 	 * reads the file and identifies all words in file
 	 * 

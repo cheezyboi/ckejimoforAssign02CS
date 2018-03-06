@@ -1,8 +1,5 @@
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class redditTester {
 	public static void main(String[] args) throws IOException {
@@ -15,7 +12,6 @@ public class redditTester {
 		 * "I am a ska beetlejuice   junglecat pizza@@ % ,,.new father and I love doing the dishes dishes dishes."
 		 * ; //redditRead.wordIdentifier(testLine, permTest);
 		 * //redditRead.wordFrequency(permTest, testMap);
-		 * 
 		 */
 		
 		String fileName = "redditPosts.txt";
