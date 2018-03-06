@@ -13,27 +13,29 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
 public class DataAnalyzer {
 
 	private String line = null;
+	private String line2 = null;
 	private ArrayList<String> tempStoredLines = new ArrayList<String>();
 
 	// METHODS FOR CONDUCTING ANALYSIS
 	// variables for generalAnalysis
 	private ArrayList<String> permGeneralLines = new ArrayList<String>();
-	private Map<String, Integer> genMap = new TreeMap<String, Integer>();
+	private Map<String,Integer> genMap = new TreeMap<String,Integer>();
 
 	// variables for trumpAnalysis
 	private ArrayList<String> permTrumpLines = new ArrayList<String>();
-	private Map<String, Integer> trumpMap = new TreeMap<String, Integer>();
+	private Map<String,Integer> trumpMap = new TreeMap<String,Integer>();
 
 	// used in analysis methods
 	/**
 	 * Reads each character in a line and organizes it in an ArrayList
-	 * If it is a character from a - z When a word ends the program 
+	 * If it is a character from a - z When a word ends the program
 	 * condenses the ArrayList into a string.
 	 * @param readLine
 	 */
@@ -69,7 +71,7 @@ public class DataAnalyzer {
 		tempStoredLines.clear();
 	}
 
-	// used in readFile
+	// used in analyses
 	/**
 	 * Counts the # of times a word occurs in data. Creates HashMap of the data. A
 	 * HashMap is a collection class that stores key (the actual word) and value (#
@@ -113,14 +115,12 @@ public class DataAnalyzer {
 	// used in wordFrequency
 	/**
 	 * Orders treeMap by the integer i.e. the # of times it occurs in the file
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	private void printMap(Map<String, Integer> map) {
 		Set s = map.entrySet();
 		Iterator it = s.iterator();
-		FileWriter writer;
-		BufferedWriter bufferedWriter;
 		while (it.hasNext()) {
 			Map.Entry entry = (Map.Entry) it.next();
 			String key = (String) entry.getKey();
@@ -152,11 +152,11 @@ public class DataAnalyzer {
 			e.printStackTrace();
 		} // catch
 	}//textFileWriter
-	
+
 	// ANALYSIS METHODS
 	/**
 	 * reads the file and identifies all words in file
-	 * 
+	 *
 	 * @param fileToRead
 	 *            - the file that is being analyzed
 	 */
@@ -183,7 +183,7 @@ public class DataAnalyzer {
 	/**
 	 * reads the file and identifies all words in the file's lines that contain
 	 * trump
-	 * 
+	 *
 	 * @param fileToRead
 	 *            - the file that is being analyzed
 	 */

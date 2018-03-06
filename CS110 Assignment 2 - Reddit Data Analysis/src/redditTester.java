@@ -14,10 +14,12 @@ public class redditTester {
 		 * //redditRead.wordFrequency(permTest, testMap);
 		 */
 		
-		String fileName = "redditPosts.txt";
+		String post = "redditPosts.txt";
+		String author = "redditAuthors.txt";
 		DataAnalyzer redditRead = new DataAnalyzer();
 
-		redditRead.generalAnalysis(fileName);
-		redditRead.trumpAnalysis(fileName);
+		//redditRead.generalAnalysis(post);
+		redditRead.generalAnalysis(author);
+		//redditRead.trumpAnalysis(post);
 	}// main
 }// redditTester
