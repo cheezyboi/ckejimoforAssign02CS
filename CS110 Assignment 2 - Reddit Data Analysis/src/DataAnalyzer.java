@@ -20,7 +20,6 @@ import java.util.TreeMap;
 public class DataAnalyzer {
 
 	private String line = null;
-	private String line2 = null;
 	private ArrayList<String> tempStoredLines = new ArrayList<String>();
 
 	// METHODS FOR CONDUCTING ANALYSIS
@@ -31,7 +30,11 @@ public class DataAnalyzer {
 	// variables for trumpAnalysis
 	private ArrayList<String> permTrumpLines = new ArrayList<String>();
 	private Map<String,Integer> trumpMap = new TreeMap<String,Integer>();
-
+	
+	// variables for authorAnalysis
+	private ArrayList<String> permAuthorLines = new ArrayList<String>();
+	private Map<Integer,String> authorMap = new TreeMap<Integer,String>();
+	
 	// used in analysis methods
 	/**
 	 * Reads each character in a line and organizes it in an ArrayList
@@ -39,7 +42,7 @@ public class DataAnalyzer {
 	 * condenses the ArrayList into a string.
 	 * @param readLine
 	 */
-	public void wordIdentifier(String readLine, ArrayList<String> permList) {
+	private void wordIdentifier(String readLine, ArrayList<String> permList) {
 		/*
 		 * reads one character at a time and checks if it is a value a-z. if it is it
 		 * will store the character in an ArrayList. When anything else is detected, the
@@ -73,11 +76,11 @@ public class DataAnalyzer {
 
 	// used in analyses
 	/**
-	 * Counts the # of times a word occurs in data. Creates HashMap of the data. A
-	 * HashMap is a collection class that stores key (the actual word) and value (#
-	 * of times it appears) pairs
+	 * Counts the # of times a word occurs in data. Creates HashMap of the data. 
+	 * A HashMap is a collection class that stores key (the actual word) and value 
+	 * (# of times it appears) pairs
 	 */
-	public void wordFrequency(ArrayList<String> permList, Map<String, Integer> map) {
+	private void wordFrequency(ArrayList<String> permList, Map<String, Integer> map) {
 		Set<String> unique = new HashSet<String>(permList);
 		for (String key : unique) {
 			map.put(key, Collections.frequency(permList, key));
@@ -85,7 +88,7 @@ public class DataAnalyzer {
 		Map<String, Integer> sortedMap = sortByValue(map);
 		printMap(sortedMap);
 	}// wordFrequency
-
+	
 	// used in wordFrequency
 	/**
 	 * Sorts map by value
@@ -126,9 +129,6 @@ public class DataAnalyzer {
 			String key = (String) entry.getKey();
 			Integer value = (Integer) entry.getValue();
 			System.out.println(key + " => " + value);
-			/*
-			 * writes data to separate text file
-			 */
 			this.textFileWriter(key, value);
 		} // while loop
 		System.out.println("========================");
@@ -140,7 +140,7 @@ public class DataAnalyzer {
 	 * @param key - key of the analyzed map
 	 * @param value - value associated with the key of the analyzed map
 	 */
-	public void textFileWriter(String key, Integer value) {
+	private void textFileWriter(String key, Integer value) {
 		FileWriter writer;
 		BufferedWriter bufferedWriter;
 		try {
@@ -154,6 +154,7 @@ public class DataAnalyzer {
 	}//textFileWriter
 
 	// ANALYSIS METHODS
+	// looks at whole file
 	/**
 	 * reads the file and identifies all words in file
 	 *
@@ -180,6 +181,7 @@ public class DataAnalyzer {
 		} // catch
 	}// generalAnalysis
 
+	// looks at only lines containing 'trump'
 	/**
 	 * reads the file and identifies all words in the file's lines that contain
 	 * trump
@@ -208,5 +210,52 @@ public class DataAnalyzer {
 			System.out.println("Error reading file '" + fileToRead + "'");
 		} // catch
 	}// trumpAnalysis
+
+	// attempting to index the redditAuthor.txt
+	public void authorAnalysis(String fileToRead) {
+		System.out.println("Ready to read file.");
+		line = null;
+		try {
+			FileReader myFileReader = new FileReader(fileToRead);
+			System.out.println("I was able to open your file!");
+			BufferedReader bufferedReader = new BufferedReader(myFileReader);
+			while ((line = bufferedReader.readLine()) != null) {
+				line.toLowerCase();
+				this.wordIdentifier(line, permAuthorLines);
+			} // while loop
+			this.authorIndex(permAuthorLines, authorMap);
+			bufferedReader.close();
+		} catch (FileNotFoundException ex) {
+			System.out.println("Unable to open file '" + fileToRead + "'");
+		} catch (IOException ex) {
+			System.out.println("Error reading file '" + fileToRead + "'");
+		} // catch
+	}// authorAnalysis
+	private void authorIndex(ArrayList<String> permList, Map<Integer, String> map) {
+		Set<String> unique = new HashSet<String>(permList);
+		int h = 0;
+		for (String key : unique) {
+			map.put(h, key);
+			h++;
+		} // for loop
+		printMapAI(map);
+	}// wordFrequency
+	/**
+	 * Orders treeMap by the integer i.e. the # of times it occurs in the file
+	 *
+	 * @throws IOException
+	 */
+	private void printMapAI(Map<Integer, String> sortedMap2) {
+		Set s = sortedMap2.entrySet();
+		Iterator it = s.iterator();
+		while (it.hasNext()) {
+			Map.Entry entry = (Map.Entry) it.next();
+			Integer key = (Integer) entry.getKey();
+			String value = (String) entry.getValue();
+			System.out.println(key + " => " + value);
+			this.textFileWriter(value, key);
+		} // while loop
+		System.out.println("========================");
+	}// printMap
 
 }// DataAnalyzer Class

@@ -20,6 +20,7 @@ public class redditTester {
 
 		//redditRead.generalAnalysis(post);
 		redditRead.generalAnalysis(author);
+		//redditRead.authorAnalysis(author);
 		//redditRead.trumpAnalysis(post);
 	}// main
 }// redditTester
