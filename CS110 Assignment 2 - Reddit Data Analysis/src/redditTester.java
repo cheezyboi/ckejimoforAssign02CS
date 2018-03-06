@@ -20,8 +20,10 @@ public class redditTester {
 
 		//redditRead.generalPostAnalysis(post);
 		//redditRead.generalAuthorAnalysis(author);
-		//redditRead.authorAnalysis(author);
 		//redditRead.trumpAnalysis(post);
-		redditRead.drjarnsAnalysis(post ,author);
+		//redditRead.drjarnsAnalysis(post ,author);
+		//redditRead.specificAuthorAnalysis(post, author, "drjarns");
+		redditRead.specificWordAnalysis(post, "repeal");
+		
 	}// main
 }// redditTester

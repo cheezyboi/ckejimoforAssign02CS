@@ -22,11 +22,14 @@ public class DataAnalyzer {
 	private String line = null;
 	private ArrayList<String> tempStoredLines = new ArrayList<String>();
 
-	// METHODS FOR CONDUCTING ANALYSIS
+	// ============================================
+	// ============================================
+	// ============================================
+
 	// variables for postGeneralAnalysis
 	private ArrayList<String> permPostGeneralLines = new ArrayList<String>();
 	private Map<String,Integer> genPostMap = new TreeMap<String,Integer>();
-	
+
 	// variables for authorGeneralAnalysis
 	private ArrayList<String> permAuthorGeneralLines = new ArrayList<String>();
 	private Map<String,Integer> genAuthorMap = new TreeMap<String,Integer>();
@@ -34,13 +37,26 @@ public class DataAnalyzer {
 	// variables for trumpAnalysis
 	private ArrayList<String> permTrumpLines = new ArrayList<String>();
 	private Map<String,Integer> trumpMap = new TreeMap<String,Integer>();
-	
-	// variables for authorAnalysis
+
+	// variables for specificAuthorAnalysis
 	private ArrayList<String> permAuthorLines = new ArrayList<String>();
-	private Map<Integer,String> authorMap = new TreeMap<Integer,String>();
+	private ArrayList<String> permAuthorLinesID = new ArrayList<String>();
+	private Map<String,Integer> authorMap = new TreeMap<String,Integer>();
+
+	// variables for specificWordAnalysis
+	private ArrayList<String> permWordLines = new ArrayList<String>();
+	private ArrayList<String> permWordLinesID = new ArrayList<String>();
+	private Map<String,Integer> wordMap = new TreeMap<String,Integer>();
+
+	//variable for drjarnsAnalysis
 	private ArrayList<String> drjarnsLines = new ArrayList<String>();
 
-	
+	// ============================================
+	// ============================================
+	// Backend methods used for counting, identifying, and organizing
+	// ============================================
+	// ============================================
+
 	// used in analysis methods
 	/**
 	 * Reads each character in a line and organizes it in an ArrayList
@@ -82,8 +98,8 @@ public class DataAnalyzer {
 
 	// used in analyses
 	/**
-	 * Counts the # of times a word occurs in data. Creates HashMap of the data. 
-	 * A HashMap is a collection class that stores key (the actual word) and value 
+	 * Counts the # of times a word occurs in data. Creates HashMap of the data.
+	 * A HashMap is a collection class that stores key (the actual word) and value
 	 * (# of times it appears) pairs
 	 */
 	private void wordFrequency(ArrayList<String> permList, Map<String, Integer> map) {
@@ -94,7 +110,7 @@ public class DataAnalyzer {
 		Map<String, Integer> sortedMap = sortByValue(map);
 		printMap(sortedMap);
 	}// wordFrequency
-	
+
 	// used in wordFrequency
 	/**
 	 * Sorts map by value
@@ -135,9 +151,9 @@ public class DataAnalyzer {
 			String key = (String) entry.getKey();
 			Integer value = (Integer) entry.getValue();
 			System.out.println(key + " => " + value);
-			this.textFileWriter(key, value);
+			//this.textFileWriter(key, value);
 		} // while loop
-		System.out.println("========================");
+		System.out.println("============================================");
 	}// printMap
 
 	// used in printMap
@@ -159,9 +175,12 @@ public class DataAnalyzer {
 		} // catch
 	}//textFileWriter
 
-	//--------------------------------------------------------
-	//--------------------------------------------------------
-	// ANALYSIS METHODS
+	// ============================================
+	// ============================================
+	// Methods used to conduct actual analyses on given data
+	// ============================================
+	// ============================================
+
 	/**
 	 * reads the file and identifies all words in the posts file
 	 * this also works for the authors file but I kept them separate
@@ -215,8 +234,7 @@ public class DataAnalyzer {
 			System.out.println("Error reading file '" + fileToRead + "'");
 		} // catch
 	}// generalAuthorAnalysis
-	
-	// used in drjarns
+
 	/**
 	 * stores all file lines in arrayList. used to identify author's posts.
 	 * @param fileToRead - the file that is being analyzed
@@ -238,12 +256,16 @@ public class DataAnalyzer {
 			System.out.println("Error reading file '" + fileToRead + "'");
 		} // catch
 	}// generalPostAnalysis
-	
 
-	// looks at only lines containing 'trump'
+	// ============================================
+	// ============================================
+	// Data specific methods run to find meaning in the  general results
+	// ============================================
+	// ============================================
+
 	/**
 	 * read file and identifies words in the file's lines that contain trump
-	 * this is a narrower version of the general analysis. finds 
+	 * this is a narrower version of the general analysis. finds
 	 * what words are associated with bringing up trump
 	 */
 	public void trumpAnalysis(String fileToRead) {
@@ -267,7 +289,7 @@ public class DataAnalyzer {
 			System.out.println("Error reading file '" + fileToRead + "'");
 		} // catch
 	}// trumpAnalysis
-	
+
 
 	// looks at only lines containing 'trump'
 	/**
@@ -302,24 +324,99 @@ public class DataAnalyzer {
 		} // catch
 	}// drjarnsAnalysis
 
+	// ============================================
+	// ============================================
+	// Generalized methods to find info on specific word or author
+	// ============================================
+	// ============================================
+
+	/**
+	 * displays the word content/count and all the posts from a specifc user
+	 * @param posts - data file containing posts
+	 * @param authors - data file containing authors
+	 * @param specificAuthor - String containing the characters that make up
+	 * the name of the user you are searching for e.g. 'drjarns'
+	 */
 	// attempting to index the redditAuthor.txt
-	public void authorAnalysis(String fileToRead) {
+	public void specificAuthorAnalysis(String posts, String authors, String specificAuthor) {
+		this.generalPostStorage(posts);
 		System.out.println("Ready to read file.");
 		line = null;
+		int nameCounter = 0;
 		try {
-			FileReader myFileReader = new FileReader(fileToRead);
+			FileReader myFileReader = new FileReader(authors);
 			System.out.println("I was able to open your file!");
 			BufferedReader bufferedReader = new BufferedReader(myFileReader);
 			while ((line = bufferedReader.readLine()) != null) {
 				line.toLowerCase();
-				this.wordIdentifier(line, permAuthorLines);
+				nameCounter++;
+				if (line.contains(specificAuthor)) {
+					permAuthorLines.add(this.permPostGeneralLines.get(nameCounter));
+					this.wordIdentifier(this.permPostGeneralLines.get(nameCounter), permAuthorLinesID);
+				} // if
 			} // while loop
-			this.authorIndex(permAuthorLines, authorMap);
+			System.out.println("============================================");
+			System.out.println("================WORD COUNT==================");
+			System.out.println("============================================");
+			this.wordFrequency(permAuthorLinesID, authorMap);
+			System.out.println("================USER POSTS==================");
+			System.out.println("============================================");
+			for (String str : permAuthorLines) {
+				System.out.println(str);
+			}
+			System.out.println("============================================");
+			System.out.println("=========NUMBER OF " + specificAuthor + "'S POSTS=========");
+			System.out.println("============================================");
+			System.out.println(permAuthorLines.size());
 			bufferedReader.close();
 		} catch (FileNotFoundException ex) {
-			System.out.println("Unable to open file '" + fileToRead + "'");
+			System.out.println("Unable to open file '" + authors + "'");
 		} catch (IOException ex) {
-			System.out.println("Error reading file '" + fileToRead + "'");
+			System.out.println("Error reading file '" + authors + "'");
+		} // catch
+	}// specificAuthorAnalysis
+
+	/**
+	 * displays the word content/count and all the posts containing a specifc word
+	 * @param posts - data file containing posts
+	 * @param specificWord - String containing the characters that make up
+	 * the name of the user you are searching for e.g. 'trump'
+	 */
+	public void specificWordAnalysis(String posts, String specificWord) {
+		this.generalPostStorage(posts);
+		System.out.println("Ready to read file.");
+		line = null;
+		int nameCounter = 0;
+		try {
+			FileReader myFileReader = new FileReader(posts);
+			System.out.println("I was able to open your file!");
+			BufferedReader bufferedReader = new BufferedReader(myFileReader);
+			while ((line = bufferedReader.readLine()) != null) {
+				line.toLowerCase();
+				nameCounter++;
+				if (line.contains(specificWord)) {
+					permWordLines.add(this.permPostGeneralLines.get(nameCounter));
+					this.wordIdentifier(this.permPostGeneralLines.get(nameCounter), permWordLinesID);
+				} // if
+			} // while loop
+			System.out.println("============================================");
+			System.out.println("================WORD COUNT==================");
+			System.out.println("============================================");
+			this.wordFrequency(permWordLinesID, wordMap);
+			System.out.println("================POSTS CONTAINING " + specificWord + "================");
+			System.out.println("============================================");
+			for (String str : permWordLines) {
+				System.out.println(str);
+			}
+			System.out.println("============================================");
+			System.out.println("========NUMBER OF POSTS CONTAINING " + specificWord + "========");
+			System.out.println("============================================");
+			System.out.println(permWordLines.size());
+			bufferedReader.close();
+		} catch (FileNotFoundException ex) {
+			System.out.println("Unable to open file '" + posts + "'");
+		} catch (IOException ex) {
+			System.out.println("Error reading file '" + posts + "'");
 		} // catch
 	}// authorAnalysis
 
