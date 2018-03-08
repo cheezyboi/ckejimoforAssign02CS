@@ -25,6 +25,8 @@ public class DataAnalyzer {
 	private ArrayList<String> storageAuthor = new ArrayList<String>();
 	private ArrayList<String> storageAuthorFiltered = new ArrayList<String>();
 	private Map<String, Integer> map = new TreeMap<String, Integer>();
+	private Map<String, String> mapForDuplicateAnalysis = new TreeMap<String, String>();
+
 	// ==========================================================================
 	// ==========================================================================
 	// Backend methods used for counting, identifying, and organizing
@@ -271,15 +273,6 @@ public class DataAnalyzer {
 		}
 	} // authorPercentAnalysis
 	/**
-	 * returns an arrayList of all of the authors that have posted only once
-	 * @param author
-	 */
-	public void authorsWOnePost(String author) {
-		this.generalAuthorStorage(author);
-		this.authorStorageFilter();
-		System.out.println(storageAuthorFiltered);
-	}
-	/**
 	 * filters the author storage method for authors that have only posted once
 	 */
 	public void authorStorageFilter() {
@@ -290,46 +283,6 @@ public class DataAnalyzer {
 			} // if frequency = postnubmer
 		} // for loop
 		this.commentTemplate("AUTHOR POSTS FILTERED");
-	}
-	/**
-	 * analysis of the posts of the authors that only posted once
-	 * @param post - posts text file
-	 * @param author - authors text file
-	 */
-	public void onePostAuthorAnalysis(String post, String author) {
-		permLines.clear();
-		permLinesID.clear();
-		map.clear();
-		line = null;
-		nameCounter = 0;
-		this.generalPostStorage(post);
-		this.generalAuthorStorage(author);
-		this.authorStorageFilter();
-		String[] a1Array = storageAuthorFiltered.toArray(new String[storageAuthorFiltered.size()]);
-		System.out.println("Ready to read file.");
-		try {
-			FileReader myFileReader = new FileReader(author);
-			System.out.println("I was able to open your file!");
-			BufferedReader bufferedReader = new BufferedReader(myFileReader);
-			while ((line = bufferedReader.readLine()) != null) {
-				line.toLowerCase();
-				nameCounter++;
-				if (this.containsItemFromArray(line, a1Array) == true) {
-					permLines.add(this.storagePost.get(nameCounter - 1));
-					this.wordIdentifier(this.storagePost.get(nameCounter - 1), permLinesID);
-				}
-			} // while loop
-			bufferedReader.close();
-		} catch (FileNotFoundException ex) {
-			System.out.println("Unable to open file '" + author + "'");
-		} catch (IOException ex) {
-			System.out.println("Error reading file '" + author + "'");
-		} // catch
-		this.commentTemplate("WORD COUNT");
-		this.wordFrequencyFiltered(permLinesID, map, 200);
-		this.commentTemplate("NUMBER OF POSTS FROM USERS WHO ONLY POSTED ONCE");
-		System.out.println(permLines.size());
-
 	}
 	/**
 	 * returns boolean of whether or not the string matches any of the items in the array
@@ -433,25 +386,53 @@ public class DataAnalyzer {
 		} // catch
 	}// generalAuthorAnalysis
 	/**
-	 * analyzes file for duplicate lines
-	 * @param posts
+	 * returns an arrayList of all of the authors that have posted only once
+	 * @param author
 	 */
-	public void postDuplicateAnalysis(String posts) {
-		map.clear();
-		storagePost.clear();
-		this.generalPostStorage(posts);
-		this.wordFrequency(storagePost, map);
-		this.wordFrequency(storagePost, map);
-	}
+	public void authorsWOnePost(String author) {
+		this.generalAuthorStorage(author);
+		this.authorStorageFilter();
+		System.out.println(storageAuthorFiltered);
+	} // authorsWOnePost
 	/**
-	 * analyzes file for duplicate lines filtered for filler words
-	 * @param posts
+	 * analysis of the posts of the authors that only posted once
+	 * @param post - posts text file
+	 * @param author - authors text file
 	 */
-	public void postDuplicateAnalysisFiltered(String posts) {
+	public void onePostAuthorAnalysis(String post, String author) {
+		permLines.clear();
+		permLinesID.clear();
 		map.clear();
-		storagePost.clear();
-		this.generalPostStorage(posts);
-		this.wordFrequencyFiltered(storagePost, map, 3);
+		line = null;
+		nameCounter = 0;
+		this.generalPostStorage(post);
+		this.generalAuthorStorage(author);
+		this.authorStorageFilter();
+		String[] a1Array = storageAuthorFiltered.toArray(new String[storageAuthorFiltered.size()]);
+		System.out.println("Ready to read file.");
+		try {
+			FileReader myFileReader = new FileReader(author);
+			System.out.println("I was able to open your file!");
+			BufferedReader bufferedReader = new BufferedReader(myFileReader);
+			while ((line = bufferedReader.readLine()) != null) {
+				line.toLowerCase();
+				nameCounter++;
+				if (this.containsItemFromArray(line, a1Array) == true) {
+					permLines.add(this.storagePost.get(nameCounter - 1));
+					this.wordIdentifier(this.storagePost.get(nameCounter - 1), permLinesID);
+				}
+			} // while loop
+			bufferedReader.close();
+		} catch (FileNotFoundException ex) {
+			System.out.println("Unable to open file '" + author + "'");
+		} catch (IOException ex) {
+			System.out.println("Error reading file '" + author + "'");
+		} // catch
+		this.commentTemplate("WORD COUNT");
+		this.wordFrequencyFiltered(permLinesID, map, 200);
+		this.commentTemplate("NUMBER OF POSTS FROM USERS WHO ONLY POSTED ONCE");
+		System.out.println(permLines.size());
+
 	}
 	/**
 	 * displays the amount of times a given user posted
@@ -541,6 +522,68 @@ public class DataAnalyzer {
 		this.commentTemplate("NUMBER OF POSTS CONTAINING '" + specificWord + "'");
 		System.out.println(permLines.size());
 	}// authorAnalysis
+	/**
+	 * analyzes file for duplicate lines
+	 * @param posts
+	 */
+	public void postDuplicateAnalysis(String posts) {
+		map.clear();
+		storagePost.clear();
+		this.generalPostStorage(posts);
+		this.wordFrequency(storagePost, map);
+		this.wordFrequency(storagePost, map);
+	} // postDuplicateAnalysis
+	/**
+	 * analyzes file for duplicate lines filtered for filler words and prints associated authors
+	 * @param posts
+	 */
+	public void postDuplicateAnalysisFiltered(String post, String author) {
+		map.clear();
+		permLines.clear();
+		permLinesID.clear();
+		storagePost.clear();
+		this.generalPostStorage(post);
+		this.generalAuthorStorage(author);
+		this.wordFrequencyFiltered(storagePost, map, 3);
+		nameCounter = 0;
+		Set<String> keys = map.keySet();
+		String[] keysArray = keys.toArray(new String[keys.size()]);
+		System.out.println("Ready to read file.");
+		try {
+			FileReader myFileReader = new FileReader(post);
+			System.out.println("I was able to open your file!");
+			BufferedReader bufferedReader = new BufferedReader(myFileReader);
+			while ((line = bufferedReader.readLine()) != null) {
+				line.toLowerCase();
+				nameCounter++;
+				/*
+				for (int i =0; i<keysArray.length; i++) {
+					if(line.contains(keysArray[i])) {
+						mapForDuplicateAnalysis.put(this.storageAuthor.get(nameCounter - 1), keysArray[i]);
+						this.wordIdentifier(this.storageAuthor.get(nameCounter - 1), permLinesID);
+					}
+				}
+				*/
+				if (this.containsItemFromArray(line, keysArray) == true) {
+					//permLines.add(this.storageAuthor.get(nameCounter - 1));
+					permLines.add(this.storageAuthor.get(nameCounter - 1));
+					this.wordIdentifier(this.storageAuthor.get(nameCounter - 1), permLinesID);
+				} // if
+			} // while loop
+			bufferedReader.close();
+		} catch (FileNotFoundException ex) {
+			System.out.println("Unable to open file '" + post + "'");
+		} catch (IOException ex) {
+			System.out.println("Error reading file '" + post + "'");
+		} // catch
+		map.clear();
+		this.wordFrequencyFiltered(permLines, map, 0);
+		/*
+		for (String item : permLines) {
+			System.out.println(item);
+		}
+		*/
+	} // postDuplicateAnalysisFiltered
 	// ==========================================================================
 	// ==========================================================================
 	public void commentTemplate(String comment) {

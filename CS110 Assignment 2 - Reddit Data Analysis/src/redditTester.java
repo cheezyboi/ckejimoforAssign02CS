@@ -18,9 +18,8 @@ public class redditTester {
 		//redditRead.onePostAuthorAnalysis(post,author);
 		
 		//redditRead.postDuplicateAnalysis(post);
-		redditRead.postDuplicateAnalysisFiltered(post);
+		redditRead.postDuplicateAnalysisFiltered(post, author);
 		
-
 		//redditRead.specificAuthorAnalysis(author, "drjarns");
 		//redditRead.specificWordAnalysis(post, "spirit");
 
