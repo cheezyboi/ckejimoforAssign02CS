@@ -2,7 +2,10 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="/Users/ckejimofor/Downloads/guava-19.0-javadoc.jar"/>
-	<classpathentry kind="lib" path="/Users/ckejimofor/Downloads/guava-19.0.jar"/>
+	<classpathentry kind="lib" path="/Users/ckejimofor/Documents/GitHub/Java Jars/guava-23.0.jar" sourcepath="/Users/ckejimofor/Documents/GitHub/Java Jars/guava-23.0-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/Users/ckejimofor/Documents/GitHub/Java%20Jars/guava-23.0-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
