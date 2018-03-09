@@ -15,8 +15,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
+
+
 public class DataAnalyzer {
-		private String line = null;
+	private String line = null;
 	private ArrayList<String> tempStoredLines = new ArrayList<String>();
 	private int nameCounter = 0;
 	private ArrayList<String> permLines = new ArrayList<String>();
@@ -25,8 +30,8 @@ public class DataAnalyzer {
 	private ArrayList<String> storageAuthor = new ArrayList<String>();
 	private ArrayList<String> storageAuthorFiltered = new ArrayList<String>();
 	private Map<String, Integer> map = new TreeMap<String, Integer>();
-	private Map<String, String> mapForDuplicateAnalysis = new TreeMap<String, String>();
-
+	private Multimap<String, String> mapByAuthor = ArrayListMultimap.create();
+	private Multimap<String, String> mapByPost = ArrayListMultimap.create();
 	// ==========================================================================
 	// ==========================================================================
 	// Backend methods used for counting, identifying, and organizing
@@ -38,7 +43,7 @@ public class DataAnalyzer {
 	 * @param fileToRead
 	 *            - the file that is being analyzed
 	 */
-	public void generalPostStorage(String fileToRead) {
+	private void generalPostStorage(String fileToRead) {
 		storagePost.clear();
 		System.out.println("Ready to read file.");
 		line = null;
@@ -63,7 +68,7 @@ public class DataAnalyzer {
 	 * @param fileToRead
 	 *            - the file that is being analyzed
 	 */
-	public void generalAuthorStorage(String author) {
+	private void generalAuthorStorage(String author) {
 		storageAuthor.clear();
 		line = null;
 		System.out.println("Ready to read file.");
@@ -107,7 +112,6 @@ public class DataAnalyzer {
 		} // for loop
 		this.arrayListCondenser(permList);
 	}// wordIdentifier
-
 	/**
 	 * Condenses the array of characters into string -> store in new ArrayList
 	 */
@@ -160,12 +164,12 @@ public class DataAnalyzer {
 		}
 		return sortedMap;
 	}
-
 	/**
 	 * Orders wordFrequency treeMap by the integer i.e. the # of times it occurs in the file
 	 *
 	 * @throws IOException
 	 */
+	@SuppressWarnings("rawtypes")
 	private void printMap(Map<String, Integer> map) {
 		Set s = map.entrySet();
 		Iterator it = s.iterator();
@@ -254,28 +258,9 @@ public class DataAnalyzer {
 		return map.size();
 	} // authorFrequencyFiltered
 	/**
-	 * returns percent values for the number of users that post 'x' times
-	 * @param author - text file that is being analyzed
-	 */
-	public void authorPercentAnalysis(String author) {
-		map.clear();
-		this.generalAuthorStorage(author);
-		line = null;
-		float noOfAuthors = 0;
-		float noOfAuthorsFiltered = 0;
-		float percent = 0;
-		int noInterations = 5;
-		noOfAuthors = this.authorFrequency(storageAuthor, map);
-		for (int i = 1; i <= noInterations; i++) {
-			noOfAuthorsFiltered = this.authorFrequencyFiltered(storageAuthor, map, i, noInterations);
-			percent = noOfAuthorsFiltered / noOfAuthors * 100;
-			System.out.println(percent);
-		}
-	} // authorPercentAnalysis
-	/**
 	 * filters the author storage method for authors that have only posted once
 	 */
-	public void authorStorageFilter() {
+	private void authorStorageFilter() {
 		Set<String> unique = new HashSet<String>(storageAuthor);
 		for (String key : unique) {
 			if (key.equalsIgnoreCase("") == false && Collections.frequency(storageAuthor, key) == 1) {
@@ -385,6 +370,25 @@ public class DataAnalyzer {
 			System.out.println("Error reading file '" + fileToRead + "'");
 		} // catch
 	}// generalAuthorAnalysis
+	/**
+	 * analysis that returns percent values for the number of users that post 'x' times
+	 * @param author - text file that is being analyzed
+	 */
+	public void authorPercentAnalysis(String author) {
+		map.clear();
+		this.generalAuthorStorage(author);
+		line = null;
+		float noOfAuthors = 0;
+		float noOfAuthorsFiltered = 0;
+		float percent = 0;
+		int noInterations = 5;
+		noOfAuthors = this.authorFrequency(storageAuthor, map);
+		for (int i = 1; i <= noInterations; i++) {
+			noOfAuthorsFiltered = this.authorFrequencyFiltered(storageAuthor, map, i, noInterations);
+			percent = noOfAuthorsFiltered / noOfAuthors * 100;
+			System.out.println(percent);
+		}
+	} // authorPercentAnalysis
 	/**
 	 * returns an arrayList of all of the authors that have posted only once
 	 * @param author
@@ -545,6 +549,7 @@ public class DataAnalyzer {
 		this.generalPostStorage(post);
 		this.generalAuthorStorage(author);
 		this.wordFrequencyFiltered(storagePost, map, 3);
+		this.commentTemplate("SUSPECTED BOTS & THEIR POSTS");
 		nameCounter = 0;
 		Set<String> keys = map.keySet();
 		String[] keysArray = keys.toArray(new String[keys.size()]);
@@ -556,19 +561,13 @@ public class DataAnalyzer {
 			while ((line = bufferedReader.readLine()) != null) {
 				line.toLowerCase();
 				nameCounter++;
-				/*
 				for (int i =0; i<keysArray.length; i++) {
 					if(line.contains(keysArray[i])) {
-						mapForDuplicateAnalysis.put(this.storageAuthor.get(nameCounter - 1), keysArray[i]);
+						mapByAuthor.put(this.storageAuthor.get(nameCounter - 1), keysArray[i]);
+						mapByPost.put(keysArray[i], this.storageAuthor.get(nameCounter - 1));
 						this.wordIdentifier(this.storageAuthor.get(nameCounter - 1), permLinesID);
-					}
-				}
-				*/
-				if (this.containsItemFromArray(line, keysArray) == true) {
-					//permLines.add(this.storageAuthor.get(nameCounter - 1));
-					permLines.add(this.storageAuthor.get(nameCounter - 1));
-					this.wordIdentifier(this.storageAuthor.get(nameCounter - 1), permLinesID);
-				} // if
+					} // if
+				} // for loop
 			} // while loop
 			bufferedReader.close();
 		} catch (FileNotFoundException ex) {
@@ -576,17 +575,19 @@ public class DataAnalyzer {
 		} catch (IOException ex) {
 			System.out.println("Error reading file '" + post + "'");
 		} // catch
-		map.clear();
+        Multimap<String,String> multimap = 
+      	      MultimapBuilder.treeKeys().linkedListValues().build(mapByPost);
+        for (String posts : multimap.keySet()) {
+            List<String> authors = (List<String>) mapByPost.get(posts);
+            System.out.println(posts + ": " + authors);
+            //System.out.println(authors);
+          }
 		this.wordFrequencyFiltered(permLines, map, 0);
-		/*
-		for (String item : permLines) {
-			System.out.println(item);
-		}
-		*/
+		System.out.println(map.size());
 	} // postDuplicateAnalysisFiltered
 	// ==========================================================================
 	// ==========================================================================
-	public void commentTemplate(String comment) {
+	private void commentTemplate(String comment) {
 		System.out.println("============================================");
 		System.out.println("================" + comment + "==================");
 		System.out.println("============================================");
