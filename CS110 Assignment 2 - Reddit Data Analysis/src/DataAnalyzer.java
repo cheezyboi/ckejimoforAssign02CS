@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -19,11 +20,17 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 
-
 public class DataAnalyzer {
+	// ==========================================================================
+	// ==========================================================================
+	// Variables used in data analysis
+	// ============================================
+	// ============================================
 	private String line = null;
 	private ArrayList<String> tempStoredLines = new ArrayList<String>();
 	private int nameCounter = 0;
+	public String decisionMaker = null;
+	
 	private ArrayList<String> permLines = new ArrayList<String>();
 	private ArrayList<String> permLinesID = new ArrayList<String>();
 	private ArrayList<String> storagePost = new ArrayList<String>();
@@ -45,11 +52,9 @@ public class DataAnalyzer {
 	 */
 	private void generalPostStorage(String fileToRead) {
 		storagePost.clear();
-		System.out.println("Ready to read file.");
 		line = null;
 		try {
 			FileReader myFileReader = new FileReader(fileToRead);
-			System.out.println("I was able to open your file!");
 			BufferedReader bufferedReader = new BufferedReader(myFileReader);
 			while ((line = bufferedReader.readLine()) != null) {
 				storagePost.add(line);
@@ -71,15 +76,13 @@ public class DataAnalyzer {
 	private void generalAuthorStorage(String author) {
 		storageAuthor.clear();
 		line = null;
-		System.out.println("Ready to read file.");
 		try {
 			FileReader myFileReader = new FileReader(author);
-			System.out.println("I was able to open your file!");
 			BufferedReader bufferedReader = new BufferedReader(myFileReader);
 			while ((line = bufferedReader.readLine()) != null) {
 				storageAuthor.add(line);
 			} // while loop
-			this.commentTemplate("SUCCESSFULLY INDEXED POSTS");
+			this.commentTemplate("SUCCESSFULLY INDEXED AUTHORS");
 			bufferedReader.close();
 		} catch (FileNotFoundException ex) {
 			System.out.println("Unable to open file '" + author + "'");
@@ -135,8 +138,7 @@ public class DataAnalyzer {
 				map.put(key, Collections.frequency(permList, key));
 			}
 		} // for loop
-		Map<String, Integer> sortedMap = sortByValue(map);
-		printMap(sortedMap);
+
 	}// wordFrequency
 	/**
 	 * Sorts wordFrequency map by value
@@ -203,13 +205,35 @@ public class DataAnalyzer {
 					&& key.equalsIgnoreCase("as") == false && key.equalsIgnoreCase("so") == false
 					&& key.equalsIgnoreCase("an") == false && key.equalsIgnoreCase("its") == false
 					&& key.equalsIgnoreCase("to") == false && key.equalsIgnoreCase("up") == false
-					&& Collections.frequency(permList, key) >= number) {
+					&& Collections.frequency(permList, key) == number) {
 				map.put(key, Collections.frequency(permList, key));
-			}
+			} else if (key.equalsIgnoreCase("this") == false && key.equalsIgnoreCase("the") == false
+					&& key.equalsIgnoreCase("and") == false && key.equalsIgnoreCase("of") == false
+					&& key.equalsIgnoreCase("a") == false && key.equalsIgnoreCase("for") == false
+					&& key.equalsIgnoreCase("is") == false && key.equalsIgnoreCase("at") == false
+					&& key.equalsIgnoreCase("on") == false && key.equalsIgnoreCase("it") == false
+					&& key.equalsIgnoreCase("are") == false && key.equalsIgnoreCase("be") == false
+					&& key.equalsIgnoreCase("that") == false && key.equalsIgnoreCase("in") == false
+					&& key.equalsIgnoreCase("was") == false && key.equalsIgnoreCase("has") == false
+					&& key.equalsIgnoreCase("as") == false && key.equalsIgnoreCase("so") == false
+					&& key.equalsIgnoreCase("not") == false && key.equalsIgnoreCase("") == false
+					&& key.equalsIgnoreCase("as") == false && key.equalsIgnoreCase("so") == false
+					&& key.equalsIgnoreCase("an") == false && key.equalsIgnoreCase("its") == false
+					&& key.equalsIgnoreCase("to") == false && key.equalsIgnoreCase("up") == false
+					&& Collections.frequency(permList, key) >= number && number >= 5) {
+				map.put(key, Collections.frequency(permList, key));
+			} // else if
 		} // for loop
-		Map<String, Integer> sortedMap = sortByValue(map);
-		printMap(sortedMap);
 	}// wordFrequency
+	/**
+	 * returns an arrayList of all of the authors that have posted only once
+	 * @param author
+	 */
+	public void authorsWOnePost(String author) {
+		this.generalAuthorStorage(author);
+		this.authorStorageFilter();
+		System.out.println(storageAuthorFiltered);
+	} // authorsWOnePost
 	// ==========================================================================
 	// ==========================================================================
 	// methods for calculating percents
@@ -295,6 +319,7 @@ public class DataAnalyzer {
 	 *            - the file that is being analyzed
 	 */
 	public void generalPostAnalysis(String fileToRead) {
+		this.titleTemplate("Overall post analysis", "shows the frequency of ALL the words as they occur in the file");
 		map.clear();
 		permLines.clear();
 		System.out.println("Ready to read file.");
@@ -307,40 +332,44 @@ public class DataAnalyzer {
 				line.toLowerCase();
 				this.wordIdentifier(line, permLines);
 			} // while loop
-			this.commentTemplate("OVERALL WORD COUNT");
-			this.wordFrequency(permLines, map);
 			bufferedReader.close();
 		} catch (FileNotFoundException ex) {
 			System.out.println("Unable to open file '" + fileToRead + "'");
 		} catch (IOException ex) {
 			System.out.println("Error reading file '" + fileToRead + "'");
 		} // catch
+		this.commentTemplate("OVERALL WORD COUNT");
+		this.wordFrequency(permLines, map);
+		Map<String, Integer> sortedMap = sortByValue(map);
+		printMap(sortedMap);
 	}// generalPostAnalysis
 	/**
 	 * generalPostAnalysis filtered to remove filler words and words that appear under 50 times
 	 * @param fileToRead - file being analyzed
 	 */
 	public void generalPostAnalysisFiltered(String fileToRead) {
+		this.titleTemplate("Overall post analysis filtered", "if frequency is above 450, shows the frequency of the words as they occur in the file");
 		map.clear();
 		permLines.clear();
-		System.out.println("Ready to read file.");
 		line = null;
 		try {
 			FileReader myFileReader = new FileReader(fileToRead);
-			System.out.println("I was able to open your file!");
 			BufferedReader bufferedReader = new BufferedReader(myFileReader);
 			while ((line = bufferedReader.readLine()) != null) {
 				line.toLowerCase();
 				this.wordIdentifier(line, permLines);
 			} // while loop
-			this.commentTemplate("OVERALL WORD COUNT");
-			this.wordFrequencyFiltered(permLines, map, 50);
+
 			bufferedReader.close();
 		} catch (FileNotFoundException ex) {
 			System.out.println("Unable to open file '" + fileToRead + "'");
 		} catch (IOException ex) {
 			System.out.println("Error reading file '" + fileToRead + "'");
 		} // catch
+		this.commentTemplate("OVERALL WORD COUNT");
+		this.wordFrequencyFiltered(permLines, map, 450);
+		Map<String, Integer> sortedMap = sortByValue(map);
+		printMap(sortedMap);
 	}// generalPostAnalysisFiltered
 	/**
 	 * shows which authors posted the most in order from biggest to smallest
@@ -349,6 +378,7 @@ public class DataAnalyzer {
 	 *            - the file that is being analyzed
 	 */
 	public void generalAuthorAnalysis(String fileToRead) {
+		this.titleTemplate("Overall author analysis", "shows ALL usernames of authors and how many times they posted");
 		map.clear();
 		permLines.clear();
 		System.out.println("Ready to read file.");
@@ -361,20 +391,52 @@ public class DataAnalyzer {
 				line.toLowerCase();
 				this.wordIdentifier(line, permLines);
 			} // while loop
-			this.commentTemplate("OVERALL AUTHOR POST COUNT");
-			this.wordFrequency(permLines, map);
 			bufferedReader.close();
 		} catch (FileNotFoundException ex) {
 			System.out.println("Unable to open file '" + fileToRead + "'");
 		} catch (IOException ex) {
 			System.out.println("Error reading file '" + fileToRead + "'");
 		} // catch
+		this.commentTemplate("OVERALL AUTHOR POST COUNT");
+		this.wordFrequency(permLines, map);
+		Map<String, Integer> sortedMap = sortByValue(map);
+		printMap(sortedMap);
+	}// generalAuthorAnalysis
+	/**
+	 * shows which authors posted the most in order from biggest to smallest
+	 * 
+	 * @param fileToRead
+	 *            - the file that is being analyzed
+	 */
+	public void generalAuthorAnalysisFiltered(String fileToRead) {
+		this.titleTemplate("Overall author analysis filtered", "shows usernames ow authors who posted more than 20 times");
+		map.clear();
+		permLines.clear();
+		line = null;
+		try {
+			FileReader myFileReader = new FileReader(fileToRead);
+			BufferedReader bufferedReader = new BufferedReader(myFileReader);
+			while ((line = bufferedReader.readLine()) != null) {
+				line.toLowerCase();
+				this.wordIdentifier(line, permLines);
+			} // while loop
+			bufferedReader.close();
+		} catch (FileNotFoundException ex) {
+			System.out.println("Unable to open file '" + fileToRead + "'");
+		} catch (IOException ex) {
+			System.out.println("Error reading file '" + fileToRead + "'");
+		} // catch
+		this.commentTemplate("OVERALL AUTHOR POST COUNT");
+		this.wordFrequencyFiltered(permLines, map, 20);
+		Map<String, Integer> sortedMap = sortByValue(map);
+		printMap(sortedMap);
 	}// generalAuthorAnalysis
 	/**
 	 * analysis that returns percent values for the number of users that post 'x' times
 	 * @param author - text file that is being analyzed
 	 */
 	public void authorPercentAnalysis(String author) {
+		this.titleTemplate("Author Analysis", "returns percent values for the number of users that post 'x' times");
 		map.clear();
 		this.generalAuthorStorage(author);
 		line = null;
@@ -386,24 +448,22 @@ public class DataAnalyzer {
 		for (int i = 1; i <= noInterations; i++) {
 			noOfAuthorsFiltered = this.authorFrequencyFiltered(storageAuthor, map, i, noInterations);
 			percent = noOfAuthorsFiltered / noOfAuthors * 100;
-			System.out.println(percent);
-		}
+			if (i == 1)
+				System.out.printf("%-1.2f%% of authors posted %d time\n", percent, i);
+			else if (i < noInterations)
+				System.out.printf("%-1.2f%% of authors posted %d times\n", percent, i);
+			else if (i == 5)
+				System.out.printf("%-1.2f%% of authors posted %d or more times\n", percent, i);
+		} // for loop
+		System.out.println("=============================================================\n");
 	} // authorPercentAnalysis
-	/**
-	 * returns an arrayList of all of the authors that have posted only once
-	 * @param author
-	 */
-	public void authorsWOnePost(String author) {
-		this.generalAuthorStorage(author);
-		this.authorStorageFilter();
-		System.out.println(storageAuthorFiltered);
-	} // authorsWOnePost
 	/**
 	 * analysis of the posts of the authors that only posted once
 	 * @param post - posts text file
 	 * @param author - authors text file
 	 */
 	public void onePostAuthorAnalysis(String post, String author) {
+		this.titleTemplate("Analysis on authors who only posted once", "returns the most prevalant words, with above 200 occurrences, written by users who only posted once");
 		permLines.clear();
 		permLinesID.clear();
 		map.clear();
@@ -413,10 +473,8 @@ public class DataAnalyzer {
 		this.generalAuthorStorage(author);
 		this.authorStorageFilter();
 		String[] a1Array = storageAuthorFiltered.toArray(new String[storageAuthorFiltered.size()]);
-		System.out.println("Ready to read file.");
 		try {
 			FileReader myFileReader = new FileReader(author);
-			System.out.println("I was able to open your file!");
 			BufferedReader bufferedReader = new BufferedReader(myFileReader);
 			while ((line = bufferedReader.readLine()) != null) {
 				line.toLowerCase();
@@ -434,10 +492,12 @@ public class DataAnalyzer {
 		} // catch
 		this.commentTemplate("WORD COUNT");
 		this.wordFrequencyFiltered(permLinesID, map, 200);
+		Map<String, Integer> sortedMap = sortByValue(map);
+		printMap(sortedMap);
 		this.commentTemplate("NUMBER OF POSTS FROM USERS WHO ONLY POSTED ONCE");
 		System.out.println(permLines.size());
-
-	}
+		System.out.println("=============================================================\n");
+	} // onePostAuthorAnalysis
 	/**
 	 * displays the amount of times a given user posted
 	 * @param authors
@@ -453,10 +513,8 @@ public class DataAnalyzer {
 		line = null;
 		nameCounter = 0;
 		this.generalAuthorStorage(authors);
-		System.out.println("Ready to read file.");
 		try {
 			FileReader myFileReader = new FileReader(authors);
-			System.out.println("I was able to open your file!");
 			BufferedReader bufferedReader = new BufferedReader(myFileReader);
 			while ((line = bufferedReader.readLine()) != null) {
 				line.toLowerCase();
@@ -464,7 +522,9 @@ public class DataAnalyzer {
 				if (line.contains(specificAuthor)) {
 					permLines.add(this.storageAuthor.get(nameCounter - 1));
 					this.wordIdentifier(this.storageAuthor.get(nameCounter - 1), permLinesID);
-				} // if
+				} else {
+					System.out.println("No posts associated with this username were found.");
+				}
 			} // while loop
 			bufferedReader.close();
 		} catch (FileNotFoundException ex) {
@@ -474,6 +534,8 @@ public class DataAnalyzer {
 		} // catch
 		this.commentTemplate("WORD COUNT");
 		this.wordFrequency(permLinesID, map);
+		Map<String, Integer> sortedMap = sortByValue(map);
+		printMap(sortedMap);
 		this.commentTemplate("POSTS CONTAINING '" + specificAuthor + "'");
 		for (String str : permLines) {
 			System.out.println(str);
@@ -519,6 +581,8 @@ public class DataAnalyzer {
 		} // catch
 		this.commentTemplate("WORD COUNT");
 		this.wordFrequency(permLinesID, map);
+		Map<String, Integer> sortedMap = sortByValue(map);
+		printMap(sortedMap);
 		this.commentTemplate("POSTS CONTAINING '" + specificWord + "'");
 		for (String str : permLines) {
 			System.out.println(str);
@@ -535,28 +599,25 @@ public class DataAnalyzer {
 		storagePost.clear();
 		this.generalPostStorage(posts);
 		this.wordFrequency(storagePost, map);
-		this.wordFrequency(storagePost, map);
+		Map<String, Integer> sortedMap = sortByValue(map);
+		printMap(sortedMap);
 	} // postDuplicateAnalysis
 	/**
 	 * analyzes file for duplicate lines filtered for filler words and prints associated authors
 	 * @param posts
 	 */
-	public void postDuplicateAnalysisFiltered(String post, String author) {
+	public void postDuplicateAnalysisFiltered(String post, String author, String decision) {
 		map.clear();
 		permLines.clear();
 		permLinesID.clear();
 		storagePost.clear();
 		this.generalPostStorage(post);
 		this.generalAuthorStorage(author);
-		this.wordFrequencyFiltered(storagePost, map, 3);
-		this.commentTemplate("SUSPECTED BOTS & THEIR POSTS");
 		nameCounter = 0;
 		Set<String> keys = map.keySet();
 		String[] keysArray = keys.toArray(new String[keys.size()]);
-		System.out.println("Ready to read file.");
 		try {
 			FileReader myFileReader = new FileReader(post);
-			System.out.println("I was able to open your file!");
 			BufferedReader bufferedReader = new BufferedReader(myFileReader);
 			while ((line = bufferedReader.readLine()) != null) {
 				line.toLowerCase();
@@ -576,22 +637,149 @@ public class DataAnalyzer {
 			System.out.println("Error reading file '" + post + "'");
 		} // catch
         Multimap<String,String> multimap = 
-      	      MultimapBuilder.treeKeys().linkedListValues().build(mapByPost);
-        for (String posts : multimap.keySet()) {
-            List<String> authors = (List<String>) mapByPost.get(posts);
-            System.out.println(posts + ": " + authors);
-            //System.out.println(authors);
-          }
-		this.wordFrequencyFiltered(permLines, map, 0);
+				MultimapBuilder.treeKeys().linkedListValues().build(mapByPost);
+		// prints full dataset as requested by user
+		if (decision.equalsIgnoreCase("y")) {
+			this.commentTemplate("SUSPECTED BOTS & THEIR POSTS");
+			for (String posts : multimap.keySet()) {
+				List<String> authors = (List<String>) mapByPost.get(posts);
+				System.out.println(authors + ": " + posts);
+			}
+		}
+		int postNo = 4;
+		this.wordFrequencyFiltered(storagePost, map, postNo);
+		this.commentTemplate("Number of posts with " + postNo + " or more reposts");
 		System.out.println(map.size());
+		/*
+		Multimap<String,String> multimap = 
+	      	      MultimapBuilder.treeKeys().linkedListValues().build(mapByAuthor);
+	        for (String posts : multimap.keySet()) {
+	            List<String> authors = (List<String>) mapByPost.get(posts);
+	            System.out.println(posts + ": " + authors);
+	          }
+		*/
 	} // postDuplicateAnalysisFiltered
 	// ==========================================================================
 	// ==========================================================================
+	// Template for comments in console
+	// ============================================
+	// ============================================
 	private void commentTemplate(String comment) {
-		System.out.println("============================================");
 		System.out.println("================" + comment + "==================");
-		System.out.println("============================================");
 	}
+	private void titleTemplate(String title, String explanation) {
+		System.out.println("\n=====**************** " + title + " ******************=====");
+		System.out.println("(" + explanation + ")\n");
+	}
+	// ==========================================================================
+	// ==========================================================================
+	// Narrative creation
 	// ============================================
 	// ============================================
+	public void authorPercentAnalysisN(String author, String decisionFlow) {
+		Scanner input = new Scanner(System.in);
+		if (decisionFlow.equalsIgnoreCase("y")) {
+			this.authorPercentAnalysis(author);
+		} else if (decisionFlow.equalsIgnoreCase("end")) {
+			this.conclusion();
+		} else {
+			System.out.println("\nEither you misspelled or you chose something ouside of your options.");
+			System.out.println("Enter [y] to continue narrative, [end] to go to conclusion");
+			decisionFlow = input.nextLine();
+			this.authorPercentAnalysisN(author, decisionFlow);
+		} // if statement
+	} // authorPercentAnalysisN
+	public void authorAnalysisN(String post, String author, String decisionFlow) {
+		Scanner input = new Scanner(System.in);
+		if (decisionFlow.equalsIgnoreCase("y")) {
+			this.onePostAuthorAnalysis(post, author);
+		} else if (decisionFlow.equalsIgnoreCase("end")) {
+			this.conclusion();
+		} else {
+			System.out.println("\nEither you misspelled or you chose something ouside of your options.");
+			System.out.println("Enter [y] to continue narrative, [end] to go to conclusion");
+			decisionFlow = input.nextLine();
+			this.authorAnalysisN(post, author, decisionFlow);
+		} // if statement
+	} // authorAnalysisN
+	public void generalAuthorAnalysesN(String author, String decisionFlow) {
+		Scanner input = new Scanner(System.in);
+		if (decisionFlow.equalsIgnoreCase("y")) {
+			this.generalAuthorAnalysisFiltered(author);
+		} else if (decisionFlow.equalsIgnoreCase("f")) {
+			this.generalAuthorAnalysis(author);
+		} else if (decisionFlow.equalsIgnoreCase("end")) {
+			this.conclusion();
+		} else {
+			System.out.println("\nEither you misspelled or you chose something ouside of your options.");
+			System.out.println("Enter [f] for full dataset, [y] to continue narrative, [end] to go to conclusion");
+			decisionFlow = input.nextLine();
+			this.generalAuthorAnalysesN(author, decisionFlow);
+		} // if statement
+	} // generalAuthorAnalysesN
+	public void generalPostAnalysesN(String post, String decisionFlow) {
+		Scanner input = new Scanner(System.in);
+		if (decisionFlow.equalsIgnoreCase("y")) {
+			this.generalPostAnalysisFiltered(post);
+		} else if (decisionFlow.equalsIgnoreCase("f")) {
+			this.generalPostAnalysis(post);
+		} else if (decisionFlow.equalsIgnoreCase("end")) {
+			this.conclusion();
+		} else {
+			System.out.println("\nEither you misspelled or you chose something ouside of your options.");
+			System.out.println("Enter [f] for full dataset, [y] to continue narrative, [end] to go to conclusion");
+			decisionFlow = input.nextLine();
+			this.generalPostAnalysesN(post, decisionFlow);
+		} // if statement
+	} // generalAuthorAnalysesN
+	public void specificAnalysesN(String post, String author, String decisionFlow) {
+		Scanner input = new Scanner(System.in);
+		if (decisionFlow.equalsIgnoreCase("y")) {
+			System.out.println("You can search what words appeared alongside other words e.g. \n"
+					+ "when clinton comes up, what other words are shown...\n");
+			System.out.println("You can also look up specific users posts e.g. \n"
+					+ "enter 'drjarnes' to see all of his posts");
+			System.out.println("\nEnter [w] for a wordsearch, [a] for an author post search, [end] to go to conclusion");
+			decisionFlow = input.nextLine();
+			this.specificAnalysesN2(post, author, decisionFlow);
+		} else if (decisionFlow.equalsIgnoreCase("n")) {
+			this.conclusion();
+		} else {
+			System.out.println("\nEither you misspelled or you chose something ouside of your options.");
+			System.out.println("Enter [w] for a wordsearch, [a] for an author post search, [end] to go to conclusion");
+			decisionFlow = input.nextLine();
+			this.generalPostAnalysesN(post, decisionFlow);
+		} // if statement
+	}
+	public void specificAnalysesN2(String post, String author, String decisionFlow) {
+		Scanner input = new Scanner(System.in);
+		if (decisionFlow.equalsIgnoreCase("w")) {
+			System.out.println("what word do you want to search for?");
+			String search = input.nextLine();
+			this.specificWordAnalysis(post, search);
+			System.out.println("Do you want to conduct another analysis? [y] [n]");
+			decisionFlow = input.nextLine();
+			this.specificAnalysesN2(post, author, decisionFlow);
+		} else if (decisionFlow.equalsIgnoreCase("a")) {
+			String search = input.nextLine();
+			this.specificAuthorAnalysis(author, search);
+			System.out.println("Do you want to conduct another analysis? [y] [n]");
+			decisionFlow = input.nextLine();
+			this.specificAnalysesN2(post, author, decisionFlow);
+		} else if (decisionFlow.equalsIgnoreCase("end")) {
+			this.conclusion();
+		} else {
+			System.out.println("\nEither you misspelled or you chose something ouside of your options.");
+			System.out.println("Enter [f] for full dataset, [y] to continue narrative, [end] to go to conclusion");
+			decisionFlow = input.nextLine();
+			this.generalPostAnalysesN(post, decisionFlow);
+		} // if statement
+	}
+
+	private void conclusion() {
+		System.out.println("\n=============================================================");
+		System.out.println("This thread is made up mostly of individuals, individuals that \n"
+				+ "have intent to contribute and engage in this topic, and bots created to \n"
+				+ "influence the individuals who only visited the thread once or twice");
+	} // line
 }// DataAnalyzer Class
